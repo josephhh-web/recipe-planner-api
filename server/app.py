@@ -136,5 +136,10 @@ def handle_recipe_by_id(id):
         return {}, 204
 
 
+@app.route('/recipes')
+def get_recipes():
+ return {"recipes": []}, 200
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
