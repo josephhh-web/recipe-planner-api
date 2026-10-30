@@ -34,6 +34,7 @@ class Recipe(db.Model):
     title = db.Column(db.String(120), nullable=False)
     prep_time_minutes = db.Column(db.Integer, nullable=False)
     ingredients = db.Column(db.Text, nullable=False)
+    instructions = db.Column(db.Text, nullable=False)
     is_favorite = db.Column(db.Boolean, default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -41,8 +42,12 @@ class Recipe(db.Model):
         return {
             "id": self.id,
             "title": self.title,
+            "instructions": self.instructions,
             "prep_time_minutes": self.prep_time_minutes,
             "ingredients": self.ingredients,
             "is_favorite": self.is_favorite,
             "user_id": self.user_id
         }
+
+    def __repr__(self):
+        return f'<Recipe {self.title}>'
