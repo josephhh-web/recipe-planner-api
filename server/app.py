@@ -1,15 +1,21 @@
-from flask import request, session, jsonify
-from server import create_app, db
-from server.models import User, Recipe
+from flask import Flask, request, session, jsonify
+from server.models import db, User, Recipe
 
-app = create_app()
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recipe_planner.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'super_secret_key_change_me'
 
-# --- AUTH ROUTES ---
+db.init_app(app)
 
+# --- HOME ROUTE ---
 
 @app.route('/')
 def home():
     return jsonify({"message": "Welcome to the Recipe Planner API!"})
+
+
+# --- AUTH ROUTES ---
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -93,6 +99,7 @@ def handle_recipes():
         try:
             new_recipe = Recipe(
                 title=data.get('title'),
+                instructions=data.get('instructions'),  # <-- Included correctly
                 prep_time_minutes=data.get('prep_time_minutes', 15),
                 ingredients=data.get('ingredients', ''),
                 is_favorite=data.get('is_favorite', False),
@@ -134,11 +141,6 @@ def handle_recipe_by_id(id):
         db.session.delete(recipe)
         db.session.commit()
         return {}, 204
-
-
-@app.route('/recipes')
-def get_recipes():
- return {"recipes": []}, 200
 
 
 if __name__ == '__main__':
